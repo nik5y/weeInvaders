@@ -1,2 +1,2 @@
 # weeTanks
-nintendo wii play tanks but better
+nintendo wii play space invadersbut better
