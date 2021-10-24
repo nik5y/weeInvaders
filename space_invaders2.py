@@ -1,28 +1,28 @@
-import pygame
-import random
 import math
+import pygame
 
+from resources.levels import level1
 from pygame import mixer
 
 # initialise pygame
 pygame.init()
 
-master_volume = 0.25
+master_volume = 0.1
 fps = 60
 delay_tick = 0
 
 # create the screen
 screen = pygame.display.set_mode((800, 600))
 clock = pygame.time.Clock()
-background_img = pygame.image.load("resources/space_invaders/images/space_background.jpg")
-background_music = mixer.Sound("resources/space_invaders/audios/ppk_resurrection.mp3")
+background_img = pygame.image.load("resources/images/space_background.jpg")
+background_music = mixer.Sound("resources/audios/ppk_resurrection.mp3")
 background_music.set_volume(master_volume)
 background_music.play(-1)
 # title and icon
 pygame.display.set_caption("Space Invaders")
 
 # player
-player_icon = pygame.image.load("resources/space_invaders/images/dolr.png")
+player_icon = pygame.image.load("resources/images/dolr.png")
 p_x, p_y = 375, 480
 p_dx = 0
 p_ddx = 2.6
@@ -34,38 +34,30 @@ t_x, t_y = 25, 25
 
 game_over_font = pygame.font.Font('freesansbold.ttf', 96)
 game_over = False
-game_over_sound = mixer.Sound("resources/space_invaders/audios/brass_fail.mp3")
+game_over_sound = mixer.Sound("resources/audios/brass_fail.mp3")
 game_over_sound.set_volume(master_volume)
 
 win = False
-win_sound = mixer.Sound("resources/space_invaders/audios/coffin_dance.mp3")
+win_sound = mixer.Sound("resources/audios/coffin_dance.mp3")
 win_sound.set_volume(master_volume)
 
-# enemy
-enemy_list = [
-    {"e_x": 0,    "e_y": 50,   "e_dx": 2,    "e_dy": 50,   "e_health": 1,    "delay": 0},
-    {"e_x": 750,  "e_y": 50,   "e_dx": -2,   "e_dy": 50,   "e_health": 1,    "delay": 0},
-    {"e_x": 0,    "e_y": 50,   "e_dx": 2,    "e_dy": 50,   "e_health": 1,    "delay": 1},
-    {"e_x": 750,  "e_y": 50,   "e_dx": -2,   "e_dy": 50,   "e_health": 1,    "delay": 0},
-    {"e_x": 0,    "e_y": 50,   "e_dx": 2,    "e_dy": 50,   "e_health": 1,    "delay": 1},
-    {"e_x": 750,  "e_y": 50,   "e_dx": -2,   "e_dy": 50,   "e_health": 1,    "delay": 0},
-
-]
+# enemies
+enemy_list = level1.enemy_list
 active_enemy_list = []
 
-enemy_icon = pygame.image.load("resources/space_invaders/images/generic_coin.png")
+enemy_icon = pygame.image.load("resources/images/generic_coin.png")
 
 # bullet
-bullet_icon = pygame.image.load("resources/space_invaders/images/bullet_chad.png")
+bullet_icon = pygame.image.load("resources/images/bullet_chad.png")
 b_x, b_y = -100, -100
 b_dx, b_dy = 0, 6
 b_action = False
-b_sound = mixer.Sound("resources/space_invaders/audios/ah_haha.mp3")
+b_sound = mixer.Sound("resources/audios/ah_haha.mp3")
 b_sound.set_volume(master_volume)
 
-enemy_bullet_collision_sound = mixer.Sound("resources/space_invaders/audios/hitmarker.wav")
+enemy_bullet_collision_sound = mixer.Sound("resources/audios/hitmarker.wav")
 enemy_bullet_collision_sound.set_volume(master_volume)
-enemy_player_collision_sound = mixer.Sound("resources/space_invaders/audios/ahhhhhhh.mp3")
+enemy_player_collision_sound = mixer.Sound("resources/audios/ahhhhhhh.mp3")
 enemy_player_collision_sound.set_volume(0.1)
 
 
@@ -105,7 +97,6 @@ def display_player_health(p_health):
 running = True
 reset_e = False
 killed_enemies = []
-
 
 while running:
 
@@ -159,7 +150,6 @@ while running:
             current_delay = enemy_list[0]["delay"]
 
             # enemy movement
-            print(delay_tick, current_delay)
             if delay_tick == current_delay * fps:
 
                 # resetting delay for next enemy
@@ -168,12 +158,7 @@ while running:
             else:
                 delay_tick += 1
 
-        print("len", len(active_enemy_list))
         for e in range(len(active_enemy_list)):
-            print("start loop", e)
-            # if reset_e:
-            #     e -= 1
-            #     reset_e = False
 
             active_enemy_list[e]["e_x"] += active_enemy_list[e]["e_dx"]
 
@@ -194,16 +179,12 @@ while running:
                 b_action = False
                 b_y = -100
                 active_enemy_list[e]["e_health"] -= 1
-                print("hit", len(active_enemy_list))
+
                 # if dead
                 if active_enemy_list[e]["e_health"] == 0:
                     score += 100
                     # delete from list
                     killed_enemies.append(e)
-                    # active_enemy_list.pop(e)
-                    # print("after pop", len(active_enemy_list))
-                    # # since list is now smaller by 1, updating index
-                    # reset_e = True
                     # checking if all enemies have been killed and no upcoming
                     if len(active_enemy_list) == 1 and len(enemy_list) == 0:
                         background_music.stop()
@@ -218,9 +199,6 @@ while running:
 
                     # delete from list
                     killed_enemies.append(e)
-                    # active_enemy_list.pop(e)
-                    # # since list is now smaller by 1, updating index
-                    # reset_e = True
 
                     p_health -= 1
 
